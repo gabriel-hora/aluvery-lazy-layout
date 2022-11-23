@@ -26,16 +26,27 @@ fun HomeScreen(
             mutableStateOf(searchText)
         }
         SearchTextField(
-            searchText = searchText,
+            searchText = text,
             onSearchChange = {
                 text = it
-            }
+            },
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
         )
-        val searchProduct = remember(text) {
-            sampleProducts.filter { product ->
-                product.name.contains(text, ignoreCase = true) ||
-                        product.description?.contains(text, ignoreCase = true) ?: false
-            }
+        val searchedProducts = remember(text) {
+            if (text.isNotBlank()) {
+                sampleProducts.filter { product ->
+                    product.name.contains(
+                        text,
+                        ignoreCase = true,
+                    ) ||
+                            product.description?.contains(
+                                text,
+                                ignoreCase = true,
+                            ) ?: false
+                }
+            } else emptyList()
         }
         LazyColumn(
             Modifier
@@ -55,10 +66,10 @@ fun HomeScreen(
                     }
                 }
             } else {
-                items(searchProduct) { p ->
+                items(searchedProducts) { p ->
                     CardProductItem(
                         product = p,
-                        Modifier.padding(horizontal = 16.dp)
+                        Modifier.padding(horizontal = 16.dp),
                     )
                 }
             }
@@ -78,10 +89,13 @@ private fun HomeScreenPreview() {
 
 @Preview
 @Composable
-fun HOmeScreenWithSearchTextPreview() {
+fun HomeScreenWithSearchTextPreview() {
     AluveryTheme {
         Surface {
-            HomeScreen(sampleSections, searchText = "pizza")
+            HomeScreen(
+                sampleSections,
+                searchText = "pizza",
+            )
         }
     }
 }
